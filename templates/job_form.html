@@ -1,0 +1,391 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header mb-4">
+
+    <div>
+        <h1 class="fw-bold mb-2">
+            {% if job %}
+                Edit Job Application
+            {% else %}
+                Add Job Application
+            {% endif %}
+        </h1>
+
+        <p class="text-muted mb-0">
+            Keep your job application details organized.
+        </p>
+    </div>
+
+    <a href="{{ url_for('jobs_page') }}"
+       class="btn btn-outline-secondary">
+        ← Back to Applications
+    </a>
+
+</div>
+
+
+<!-- =========================
+     JOB FORM CARD
+========================= -->
+
+<div class="dashboard-card">
+
+    <form method="POST">
+
+        <div class="row g-4">
+
+
+            <!-- COMPANY -->
+
+            <div class="col-md-6">
+
+                <label for="company"
+                       class="form-label fw-semibold">
+
+                    Company <span class="text-danger">*</span>
+
+                </label>
+
+                <input
+                    type="text"
+                    id="company"
+                    name="company"
+                    class="form-control"
+                    placeholder="e.g. UST"
+                    value="{{ job.company if job else '' }}"
+                    required
+                >
+
+            </div>
+
+
+            <!-- JOB TITLE -->
+
+            <div class="col-md-6">
+
+                <label for="title"
+                       class="form-label fw-semibold">
+
+                    Job Title <span class="text-danger">*</span>
+
+                </label>
+
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    class="form-control"
+                    placeholder="e.g. Python Developer"
+                    value="{{ job.title if job else '' }}"
+                    required
+                >
+
+            </div>
+
+
+            <!-- LOCATION -->
+
+            <div class="col-md-4">
+
+                <label for="location"
+                       class="form-label fw-semibold">
+
+                    Location
+
+                </label>
+
+                <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    class="form-control"
+                    placeholder="e.g. Trivandrum"
+                    value="{{ job.location if job else '' }}"
+                >
+
+            </div>
+
+
+            <!-- JOB TYPE -->
+
+            <div class="col-md-4">
+
+                <label for="job_type"
+                       class="form-label fw-semibold">
+
+                    Job Type
+
+                </label>
+
+                <select
+                    id="job_type"
+                    name="job_type"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        Select Job Type
+                    </option>
+
+                    <option
+                        value="Internship"
+                        {% if job and job.job_type == "Internship" %}
+                            selected
+                        {% endif %}
+                    >
+                        Internship
+                    </option>
+
+                    <option
+                        value="Full-time"
+                        {% if job and job.job_type == "Full-time" %}
+                            selected
+                        {% endif %}
+                    >
+                        Full-time
+                    </option>
+
+                    <option
+                        value="Part-time"
+                        {% if job and job.job_type == "Part-time" %}
+                            selected
+                        {% endif %}
+                    >
+                        Part-time
+                    </option>
+
+                    <option
+                        value="Contract"
+                        {% if job and job.job_type == "Contract" %}
+                            selected
+                        {% endif %}
+                    >
+                        Contract
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- APPLIED DATE -->
+
+            <div class="col-md-4">
+
+                <label for="applied_date"
+                       class="form-label fw-semibold">
+
+                    Applied Date
+                    <span class="text-danger">*</span>
+
+                </label>
+
+                <input
+                    type="date"
+                    id="applied_date"
+                    name="applied_date"
+                    class="form-control"
+                    value="{{ job.applied_date.isoformat() if job else '' }}"
+                    required
+                >
+
+            </div>
+
+
+            <!-- JOB URL -->
+
+            <div class="col-md-6">
+
+                <label for="job_url"
+                       class="form-label fw-semibold">
+
+                    Job URL
+
+                </label>
+
+                <input
+                    type="url"
+                    id="job_url"
+                    name="job_url"
+                    class="form-control"
+                    placeholder="https://example.com/job"
+                    value="{{ job.job_url if job else '' }}"
+                >
+
+                <div class="form-text">
+                    Add the original job posting link.
+                </div>
+
+            </div>
+
+
+            <!-- SALARY -->
+
+            <div class="col-md-6">
+
+                <label for="salary"
+                       class="form-label fw-semibold">
+
+                    Salary / Stipend
+
+                </label>
+
+                <input
+                    type="text"
+                    id="salary"
+                    name="salary"
+                    class="form-control"
+                    placeholder="e.g. ₹15,000/month"
+                    value="{{ job.salary if job else '' }}"
+                >
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="col-md-6">
+
+                <label for="status"
+                       class="form-label fw-semibold">
+
+                    Application Status
+
+                </label>
+
+                <select
+                    id="status"
+                    name="status"
+                    class="form-select"
+                >
+
+                    <option
+                        value="Applied"
+                        {% if not job or job.status == "Applied" %}
+                            selected
+                        {% endif %}
+                    >
+                        Applied
+                    </option>
+
+                    <option
+                        value="Shortlisted"
+                        {% if job and job.status == "Shortlisted" %}
+                            selected
+                        {% endif %}
+                    >
+                        Shortlisted
+                    </option>
+
+                    <option
+                        value="Interview"
+                        {% if job and job.status == "Interview" %}
+                            selected
+                        {% endif %}
+                    >
+                        Interview
+                    </option>
+
+                    <option
+                        value="Selected"
+                        {% if job and job.status == "Selected" %}
+                            selected
+                        {% endif %}
+                    >
+                        Selected
+                    </option>
+
+                    <option
+                        value="Rejected"
+                        {% if job and job.status == "Rejected" %}
+                            selected
+                        {% endif %}
+                    >
+                        Rejected
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- NOTES -->
+
+            <div class="col-12">
+
+                <label for="notes"
+                       class="form-label fw-semibold">
+
+                    Notes
+
+                </label>
+
+                <textarea
+                    id="notes"
+                    name="notes"
+                    class="form-control"
+                    rows="5"
+                    placeholder="Add notes about the company, recruiter, requirements, etc."
+                >{{ job.notes if job else '' }}</textarea>
+
+            </div>
+
+
+            <!-- REQUIRED INFO -->
+
+            <div class="col-12">
+
+                <div class="alert alert-light border mb-0">
+
+                    <small class="text-muted">
+                        <strong>*</strong>
+                        Required fields
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- BUTTONS -->
+
+            <div class="col-12">
+
+                <hr class="my-1">
+
+                <div class="d-flex gap-2 mt-3">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary px-4"
+                    >
+
+                        {% if job %}
+                            Update Application
+                        {% else %}
+                            Save Application
+                        {% endif %}
+
+                    </button>
+
+                    <a
+                        href="{{ url_for('jobs_page') }}"
+                        class="btn btn-outline-secondary px-4"
+                    >
+                        Cancel
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="mb-4">
+    <h2>AI Resume ↔ Job Description Match</h2>
+    <p class="text-muted mb-0">
+        Paste your skills and a job description. See your match score, what's
+        missing, and what to learn next.
+    </p>
+</div>
+
+<div class="card p-4">
+
+    <div class="row g-3">
+
+        <div class="col-md-6">
+            <label class="form-label">Your Skills *</label>
+            <p class="text-muted small mb-1">Comma or line separated</p>
+            <textarea id="resumeSkills" class="form-control" rows="8"
+                placeholder="Python, SQL, REST API, SQLite, Git"></textarea>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Job Description *</label>
+            <p class="text-muted small mb-1">Paste the full JD here</p>
+            <textarea id="jobDescription" class="form-control" rows="8"
+                placeholder="Paste the job description here"></textarea>
+        </div>
+
+        <div class="col-12">
+            <button class="btn btn-primary" id="runMatch">
+                Analyze Match
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div id="matchResult" class="card p-4 mt-4" style="display:none;">
+
+    <div class="row g-4 align-items-start">
+
+        <div class="col-md-3 text-center">
+            <div id="scoreCircle" class="score-circle mx-auto">
+                <span id="scoreValue">0%</span>
+            </div>
+            <p class="text-muted mt-2 mb-0">Match Score</p>
+        </div>
+
+        <div class="col-md-4">
+            <h6 class="text-success">Matched Skills</h6>
+            <div id="matchedList"></div>
+        </div>
+
+        <div class="col-md-5">
+            <h6 class="text-warning">Missing From Your Resume</h6>
+            <div id="missingList"></div>
+        </div>
+
+    </div>
+
+    <hr>
+
+    <h6>Suggested Next Steps</h6>
+    <ul id="suggestList" class="mb-0"></ul>
+
+</div>
+
+<script>
+
+function escapeHtml(value) {
+    if (!value) return "";
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}
+
+document.getElementById("runMatch").addEventListener("click", async () => {
+
+    const resume_skills = document.getElementById("resumeSkills").value.trim();
+    const job_description = document.getElementById("jobDescription").value.trim();
+
+    if (!resume_skills || !job_description) {
+        alert("Please fill in both your skills and the job description.");
+        return;
+    }
+
+    let data;
+
+    try {
+        const response = await fetch("/api/resume-match", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ resume_skills, job_description })
+        });
+
+        data = await response.json();
+
+        if (!response.ok) {
+            alert(data.error || "Something went wrong.");
+            return;
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Failed to analyze. Please try again.");
+        return;
+    }
+
+    document.getElementById("matchResult").style.display = "block";
+
+    const score = data.match_score;
+    document.getElementById("scoreValue").textContent = score + "%";
+
+    const color = score >= 70 ? "#198754" : score >= 40 ? "#ffc107" : "#dc3545";
+    document.getElementById("scoreCircle").style.background =
+        `conic-gradient(${color} ${score * 3.6}deg, #e9ecef 0deg)`;
+
+    const matchedList = document.getElementById("matchedList");
+    matchedList.innerHTML = data.matched_skills.length
+        ? data.matched_skills.map(s => `<span class="skill-pill ok">${escapeHtml(s)}</span>`).join("")
+        : `<span class="text-muted">None matched</span>`;
+
+    const missingList = document.getElementById("missingList");
+    missingList.innerHTML = data.missing_skills.length
+        ? data.missing_skills.map(s => `<span class="skill-pill warn">${escapeHtml(s)}</span>`).join("")
+        : `<span class="text-muted">Nothing major missing</span>`;
+
+    const suggestList = document.getElementById("suggestList");
+    suggestList.innerHTML = data.suggested_learning.length
+        ? data.suggested_learning.map(s => `<li>${escapeHtml(s)}</li>`).join("")
+        : `<li>Your skills already line up well with this JD.</li>`;
+});
+
+</script>
+
+{% endblock %}

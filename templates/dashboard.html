@@ -1,0 +1,770 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- ============================================================
+     PAGE HEADER
+============================================================ -->
+
+<div class="page-header">
+
+    <div class="page-header-text">
+
+        <div class="brand-badge">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+                 stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 3h6a2 2 0 0 1 2 2v2H7V5a2 2 0 0 1 2-2Z"></path>
+                <rect x="3" y="7" width="18" height="14" rx="2"></rect>
+                <path d="M3 12h18"></path>
+            </svg>
+        </div>
+
+        <div>
+            <h1>
+                <span class="brand-accent">Job</span>Pilot
+            </h1>
+
+            <p>From Application to Opportunity.</p>
+        </div>
+
+    </div>
+
+    <a href="{{ url_for('add_job') }}" class="btn-add">
+        + Add Application
+    </a>
+
+</div>
+
+
+<!-- ============================================================
+     KPI CARDS
+============================================================ -->
+
+<div class="kpi-grid">
+
+    <!-- TOTAL APPLICATIONS -->
+    <div class="kpi-card total-card">
+
+        <div class="kpi-icon">
+            <svg viewBox="0 0 24 24">
+
+                <rect
+                    x="4"
+                    y="3"
+                    width="16"
+                    height="18"
+                    rx="2">
+                </rect>
+
+                <path d="M8 7h8"></path>
+                <path d="M8 11h8"></path>
+                <path d="M8 15h5"></path>
+
+            </svg>
+        </div>
+
+        <div class="kpi-content">
+
+            <span>Total Applications</span>
+
+            <strong>
+                {{ total }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- APPLIED -->
+    <div class="kpi-card applied-card">
+
+        <div class="kpi-icon">
+
+            <svg viewBox="0 0 24 24">
+
+                <path d="M6 4h12v16H6z"></path>
+                <path d="M9 8h6"></path>
+                <path d="M9 12h6"></path>
+                <path d="M9 16h4"></path>
+
+            </svg>
+
+        </div>
+
+        <div class="kpi-content">
+
+            <span>Applied</span>
+
+            <strong>
+                {{ counts["Applied"] }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- SHORTLISTED -->
+    <div class="kpi-card shortlisted-card">
+
+        <div class="kpi-icon">
+
+            <svg viewBox="0 0 24 24">
+
+                <path d="M5 4h14v16H5z"></path>
+                <path d="M8 12l2 2 5-5"></path>
+
+            </svg>
+
+        </div>
+
+        <div class="kpi-content">
+
+            <span>Shortlisted</span>
+
+            <strong>
+                {{ counts["Shortlisted"] }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- INTERVIEW -->
+    <div class="kpi-card interview-card">
+
+        <div class="kpi-icon">
+
+            <svg viewBox="0 0 24 24">
+
+                <rect
+                    x="3"
+                    y="5"
+                    width="18"
+                    height="15"
+                    rx="2">
+                </rect>
+
+                <path d="M8 3v4"></path>
+                <path d="M16 3v4"></path>
+                <path d="M3 10h18"></path>
+
+            </svg>
+
+        </div>
+
+        <div class="kpi-content">
+
+            <span>Interview</span>
+
+            <strong>
+                {{ counts["Interview"] }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- SELECTED -->
+    <div class="kpi-card selected-card">
+
+        <div class="kpi-icon">
+
+            <svg viewBox="0 0 24 24">
+
+                <circle
+                    cx="12"
+                    cy="12"
+                    r="9">
+                </circle>
+
+                <path d="M8 12l2.5 2.5L16 9"></path>
+
+            </svg>
+
+        </div>
+
+        <div class="kpi-content">
+
+            <span>Selected</span>
+
+            <strong>
+                {{ counts["Selected"] }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- REJECTED -->
+    <div class="kpi-card rejected-card">
+
+        <div class="kpi-icon">
+
+            <svg viewBox="0 0 24 24">
+
+                <circle
+                    cx="12"
+                    cy="12"
+                    r="9">
+                </circle>
+
+                <path d="M9 9l6 6"></path>
+                <path d="M15 9l-6 6"></path>
+
+            </svg>
+
+        </div>
+
+        <div class="kpi-content">
+
+            <span>Rejected</span>
+
+            <strong>
+                {{ counts["Rejected"] }}
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     CHART ROW
+============================================================ -->
+
+<div class="chart-grid">
+
+    <!-- MONTHLY APPLICATIONS -->
+    <div class="dashboard-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h3>
+                    Monthly Applications
+                </h3>
+
+                <p>
+                    Application activity over time
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="chart-container">
+            <canvas id="monthlyChart"></canvas>
+        </div>
+
+    </div>
+
+
+    <!-- APPLICATION STATUS -->
+    <div class="dashboard-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h3>
+                    Application Status
+                </h3>
+
+                <p>
+                    Current application distribution
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="donut-container">
+            <canvas id="statusChart"></canvas>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     TOP COMPANIES
+============================================================ -->
+
+<div class="dashboard-card companies-card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h3>
+                Top Companies
+            </h3>
+
+            <p>
+                Companies with the highest number of applications
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="company-chart-container">
+        <canvas id="companyChart"></canvas>
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     FLASK DATA
+============================================================ -->
+
+<script type="application/json" id="monthly-data">
+{{ monthly | tojson }}
+</script>
+
+
+<script type="application/json" id="company-data">
+{{ company_data | tojson }}
+</script>
+
+
+<script type="application/json" id="status-data">
+{
+    "Applied": {{ counts["Applied"] }},
+    "Shortlisted": {{ counts["Shortlisted"] }},
+    "Interview": {{ counts["Interview"] }},
+    "Selected": {{ counts["Selected"] }},
+    "Rejected": {{ counts["Rejected"] }}
+}
+</script>
+
+
+<!-- ============================================================
+     CHART JAVASCRIPT
+============================================================ -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        /* =====================================================
+           READ FLASK DATA
+        ===================================================== */
+
+        const monthlyElement =
+            document.getElementById("monthly-data");
+
+        const companyElement =
+            document.getElementById("company-data");
+
+        const statusElement =
+            document.getElementById("status-data");
+
+
+        const monthlyData =
+            monthlyElement
+                ? JSON.parse(monthlyElement.textContent)
+                : [];
+
+
+        const companyData =
+            companyElement
+                ? JSON.parse(companyElement.textContent)
+                : [];
+
+
+        const statusData =
+            statusElement
+                ? JSON.parse(statusElement.textContent)
+                : {};
+
+
+        /* =====================================================
+           MONTHLY APPLICATIONS
+        ===================================================== */
+
+        const monthlyCanvas =
+            document.getElementById("monthlyChart");
+
+
+        if (
+            monthlyCanvas &&
+            typeof Chart !== "undefined"
+        ) {
+
+            const monthlyLabels =
+                monthlyData.map(
+                    function (item) {
+                        return item.month;
+                    }
+                );
+
+
+            const monthlyCounts =
+                monthlyData.map(
+                    function (item) {
+                        return item.count;
+                    }
+                );
+
+
+            new Chart(
+                monthlyCanvas,
+                {
+
+                    type: "line",
+
+                    data: {
+
+                        labels:
+                            monthlyLabels,
+
+                        datasets: [
+
+                            {
+
+                                label:
+                                    "Applications",
+
+                                data:
+                                    monthlyCounts,
+
+                                fill:
+                                    true,
+
+                                tension:
+                                    0.35,
+
+                                borderWidth:
+                                    2,
+
+                                pointRadius:
+                                    3,
+
+                                pointHoverRadius:
+                                    5,
+
+                                borderColor:
+                                    "#2196f3",
+
+                                backgroundColor:
+                                    "rgba(33, 150, 243, 0.18)"
+
+                            }
+
+                        ]
+
+                    },
+
+                    options: {
+
+                        responsive:
+                            true,
+
+                        maintainAspectRatio:
+                            false,
+
+                        plugins: {
+
+                            legend: {
+
+                                display:
+                                    false
+                            }
+
+                        },
+
+                        scales: {
+
+                            y: {
+
+                                beginAtZero:
+                                    true,
+
+                                ticks: {
+
+                                    precision:
+                                        0
+                                }
+
+                            },
+
+                            x: {
+
+                                grid: {
+
+                                    display:
+                                        false
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           APPLICATION STATUS DONUT
+        ===================================================== */
+
+        const statusCanvas =
+            document.getElementById("statusChart");
+
+
+        if (
+            statusCanvas &&
+            typeof Chart !== "undefined"
+        ) {
+
+            new Chart(
+                statusCanvas,
+                {
+
+                    type:
+                        "doughnut",
+
+                    data: {
+
+                        labels: [
+
+                            "Applied",
+                            "Shortlisted",
+                            "Interview",
+                            "Selected",
+                            "Rejected"
+
+                        ],
+
+                        datasets: [
+
+                            {
+
+                                data: [
+
+                                    statusData.Applied || 0,
+                                    statusData.Shortlisted || 0,
+                                    statusData.Interview || 0,
+                                    statusData.Selected || 0,
+                                    statusData.Rejected || 0
+
+                                ],
+
+                                backgroundColor: [
+
+                                    "#2196f3",
+                                    "#ff5c7a",
+                                    "#ff9800",
+                                    "#20a464",
+                                    "#e53935"
+
+                                ],
+
+                                borderColor:
+                                    "#ffffff",
+
+                                borderWidth:
+                                    2
+
+                            }
+
+                        ]
+
+                    },
+
+                    options: {
+
+                        responsive:
+                            true,
+
+                        maintainAspectRatio:
+                            false,
+
+                        cutout:
+                            "68%",
+
+                        plugins: {
+
+                            legend: {
+
+                                position:
+                                    "bottom",
+
+                                labels: {
+
+                                    usePointStyle:
+                                        true,
+
+                                    pointStyle:
+                                        "circle",
+
+                                    padding:
+                                        12,
+
+                                    font: {
+
+                                        size:
+                                            10
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           TOP COMPANIES
+        ===================================================== */
+
+        const companyCanvas =
+            document.getElementById("companyChart");
+
+
+        if (
+            companyCanvas &&
+            typeof Chart !== "undefined"
+        ) {
+
+            const companyLabels =
+                companyData.map(
+                    function (item) {
+                        return item[0];
+                    }
+                );
+
+
+            const companyCounts =
+                companyData.map(
+                    function (item) {
+                        return item[1];
+                    }
+                );
+
+
+            new Chart(
+                companyCanvas,
+                {
+
+                    type:
+                        "bar",
+
+                    data: {
+
+                        labels:
+                            companyLabels,
+
+                        datasets: [
+
+                            {
+
+                                label:
+                                    "Applications",
+
+                                data:
+                                    companyCounts,
+
+                                backgroundColor:
+                                    "rgba(33, 150, 243, 0.45)",
+
+                                borderColor:
+                                    "#2196f3",
+
+                                borderWidth:
+                                    1,
+
+                                borderRadius:
+                                    4
+
+                            }
+
+                        ]
+
+                    },
+
+                    options: {
+
+                        indexAxis:
+                            "y",
+
+                        responsive:
+                            true,
+
+                        maintainAspectRatio:
+                            false,
+
+                        plugins: {
+
+                            legend: {
+
+                                display:
+                                    false
+                            }
+
+                        },
+
+                        scales: {
+
+                            x: {
+
+                                beginAtZero:
+                                    true,
+
+                                ticks: {
+
+                                    precision:
+                                        0
+                                }
+
+                            },
+
+                            y: {
+
+                                grid: {
+
+                                    display:
+                                        false
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+{% endblock %}

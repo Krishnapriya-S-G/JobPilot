@@ -1,0 +1,460 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header mb-4">
+
+    <div>
+        <h1 class="fw-bold mb-2">
+            {% if interview %}
+                Edit Interview
+            {% else %}
+                Add Interview
+            {% endif %}
+        </h1>
+
+        <p class="text-muted mb-0">
+            Track the interview date, time, round, type and result.
+        </p>
+    </div>
+
+    <a href="{{ url_for('interviews_page') }}"
+       class="btn btn-outline-secondary">
+        ← Back to Interviews
+    </a>
+
+</div>
+
+
+<!-- =========================
+     FORM
+========================= -->
+
+<div class="dashboard-card">
+
+    {% if error %}
+
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+
+    {% endif %}
+
+
+    <form method="POST">
+
+        <div class="row g-4">
+
+
+            <!-- JOB APPLICATION -->
+
+            <div class="col-12">
+
+                <label for="job_id"
+                       class="form-label fw-semibold">
+
+                    Job Application
+                    <span class="text-danger">*</span>
+
+                </label>
+
+                <select
+                    id="job_id"
+                    name="job_id"
+                    class="form-select"
+                    required
+                >
+
+                    <option value="">
+                        -- Select a job application --
+                    </option>
+
+                    {% for j in jobs %}
+
+                        <option
+                            value="{{ j.id }}"
+
+                            {% if interview and interview.job_id == j.id %}
+                                selected
+
+                            {% elif not interview and preselect_job_id is defined and preselect_job_id == j.id %}
+                                selected
+                            {% endif %}
+                        >
+
+                            {{ j.company }} — {{ j.title }}
+
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+                <div class="form-text">
+                    Select the job application related to this interview.
+                </div>
+
+            </div>
+
+
+            <!-- INTERVIEW DATE -->
+
+            <div class="col-md-4">
+
+                <label for="interview_date"
+                       class="form-label fw-semibold">
+
+                    Interview Date
+                    <span class="text-danger">*</span>
+
+                </label>
+
+                <input
+                    type="date"
+                    id="interview_date"
+                    name="interview_date"
+                    class="form-control"
+                    required
+
+                    value="{% if interview %}{{ interview.interview_date.strftime('%Y-%m-%d') }}{% endif %}"
+                >
+
+            </div>
+
+
+            <!-- HOUR -->
+
+            <div class="col-md-3">
+
+                <label for="hour"
+                       class="form-label fw-semibold">
+
+                    Hour
+                    <span class="text-danger">*</span>
+
+                </label>
+
+                <select
+                    id="hour"
+                    name="hour"
+                    class="form-select"
+                    required
+                >
+
+                    <option value="">
+                        Hour
+                    </option>
+
+                    {% for h in range(1, 13) %}
+
+                        <option
+                            value="{{ '%02d'|format(h) }}"
+
+                            {% if interview %}
+                                {% set current_hour = interview.interview_date.strftime('%I') %}
+
+                                {% if current_hour == '%02d'|format(h) %}
+                                    selected
+                                {% endif %}
+                            {% endif %}
+                        >
+
+                            {{ '%02d'|format(h) }}
+
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- MINUTE -->
+
+            <div class="col-md-2">
+
+                <label for="minute"
+                       class="form-label fw-semibold">
+
+                    Minute
+                    <span class="text-danger">*</span>
+
+                </label>
+
+                <select
+                    id="minute"
+                    name="minute"
+                    class="form-select"
+                    required
+                >
+
+                    <option value="">
+                        Min
+                    </option>
+
+                    {% for m in range(0, 60, 5) %}
+
+                        <option
+                            value="{{ '%02d'|format(m) }}"
+
+                            {% if interview %}
+                                {% set current_minute = interview.interview_date.strftime('%M') %}
+
+                                {% if current_minute == '%02d'|format(m) %}
+                                    selected
+                                {% endif %}
+                            {% endif %}
+                        >
+
+                            {{ '%02d'|format(m) }}
+
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- AM / PM -->
+
+            <div class="col-md-3">
+
+                <label for="ampm"
+                       class="form-label fw-semibold">
+
+                    AM / PM
+                    <span class="text-danger">*</span>
+
+                </label>
+
+                <select
+                    id="ampm"
+                    name="ampm"
+                    class="form-select"
+                    required
+                >
+
+                    <option value="">
+                        Select
+                    </option>
+
+                    <option
+                        value="AM"
+
+                        {% if interview and interview.interview_date.strftime('%p') == 'AM' %}
+                            selected
+                        {% endif %}
+                    >
+                        AM
+                    </option>
+
+                    <option
+                        value="PM"
+
+                        {% if interview and interview.interview_date.strftime('%p') == 'PM' %}
+                            selected
+                        {% endif %}
+                    >
+                        PM
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- ROUND -->
+
+            <div class="col-md-6">
+
+                <label for="round"
+                       class="form-label fw-semibold">
+
+                    Interview Round
+
+                </label>
+
+                <input
+                    type="text"
+                    id="round"
+                    name="round"
+                    class="form-control"
+                    placeholder="e.g. Round 1 - Technical"
+
+                    value="{{ interview.round if interview else '' }}"
+                >
+
+            </div>
+
+
+            <!-- INTERVIEW TYPE -->
+
+            <div class="col-md-6">
+
+                <label for="interview_type"
+                       class="form-label fw-semibold">
+
+                    Interview Type
+
+                </label>
+
+                <select
+                    id="interview_type"
+                    name="interview_type"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        Select Interview Type
+                    </option>
+
+                    {% for type in ["Online", "Offline", "Phone"] %}
+
+                        <option
+                            value="{{ type }}"
+
+                            {% if interview and interview.interview_type == type %}
+                                selected
+                            {% endif %}
+                        >
+
+                            {{ type }}
+
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="col-md-6">
+
+                <label for="status"
+                       class="form-label fw-semibold">
+
+                    Interview Status
+
+                </label>
+
+                <select
+                    id="status"
+                    name="status"
+                    class="form-select"
+                >
+
+                    {% for s in [
+                        "Scheduled",
+                        "Completed",
+                        "Passed",
+                        "Failed",
+                        "Cancelled"
+                    ] %}
+
+                        <option
+                            value="{{ s }}"
+
+                            {% if interview and interview.status == s %}
+                                selected
+
+                            {% elif not interview and s == "Scheduled" %}
+                                selected
+                            {% endif %}
+                        >
+
+                            {{ s }}
+
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- FEEDBACK -->
+
+            <div class="col-12">
+
+                <label for="feedback"
+                       class="form-label fw-semibold">
+
+                    Feedback
+
+                </label>
+
+                <textarea
+                    id="feedback"
+                    name="feedback"
+                    class="form-control"
+                    rows="5"
+                    placeholder="Add interview feedback, questions asked, recruiter comments, etc."
+                >{{ interview.feedback if interview else '' }}</textarea>
+
+            </div>
+
+
+            <!-- REQUIRED INFO -->
+
+            <div class="col-12">
+
+                <div class="alert alert-light border mb-0">
+
+                    <small class="text-muted">
+                        <strong>*</strong>
+                        Required fields
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- BUTTONS -->
+
+            <div class="col-12">
+
+                <hr class="my-1">
+
+                <div class="d-flex gap-2 mt-3">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary px-4"
+                    >
+
+                        {% if interview %}
+                            Update Interview
+                        {% else %}
+                            Save Interview
+                        {% endif %}
+
+                    </button>
+
+
+                    <a
+                        href="{{ url_for('interviews_page') }}"
+                        class="btn btn-outline-secondary px-4"
+                    >
+                        Cancel
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+{% endblock %}

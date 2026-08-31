@@ -1,0 +1,927 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- ============================================================
+     PAGE HEADER
+============================================================ -->
+
+<div class="page-header">
+
+    <div class="page-header-text">
+
+        <div class="brand-badge">
+            <svg viewBox="0 0 24 24"
+                 width="20"
+                 height="20"
+                 fill="none"
+                 stroke="white"
+                 stroke-width="2"
+                 stroke-linecap="round"
+                 stroke-linejoin="round">
+
+                <path d="M9 3h6a2 2 0 0 1 2 2v2H7V5a2 2 0 0 1 2-2Z"></path>
+                <rect x="3" y="7" width="18" height="14" rx="2"></rect>
+                <path d="M3 12h18"></path>
+
+            </svg>
+        </div>
+
+        <div>
+
+            <h1>
+                <span class="brand-accent">Job</span>Pilot
+            </h1>
+
+            <p>
+                Track and manage your job applications.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <a
+        href="{{ url_for('add_job') }}"
+        class="btn-add"
+    >
+        + Add Application
+    </a>
+
+</div>
+
+
+<!-- ============================================================
+     APPLICATION COUNT
+============================================================ -->
+
+<div class="mb-3">
+
+    <span id="applicationCount">
+        {{ jobs|length }} application{% if jobs|length != 1 %}s{% endif %}
+    </span>
+
+</div>
+
+
+<!-- ============================================================
+     FILTER CARD
+============================================================ -->
+
+<div class="filter-card mb-4">
+
+    <div class="card-header mb-3">
+
+        <h3>
+            Filter Applications
+        </h3>
+
+        <p>
+            Search and filter your job applications.
+        </p>
+
+    </div>
+
+
+    <div class="row g-3">
+
+        <!-- COMPANY -->
+
+        <div class="col-md-3">
+
+            <label
+                for="companyFilter"
+                class="form-label"
+            >
+                Company
+            </label>
+
+            <input
+                type="text"
+                id="companyFilter"
+                class="form-control"
+                placeholder="Search company..."
+            >
+
+        </div>
+
+
+        <!-- LOCATION -->
+
+        <div class="col-md-3">
+
+            <label
+                for="locationFilter"
+                class="form-label"
+            >
+                Location
+            </label>
+
+            <input
+                type="text"
+                id="locationFilter"
+                class="form-control"
+                placeholder="Search location..."
+            >
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="col-md-3">
+
+            <label
+                for="statusFilter"
+                class="form-label"
+            >
+                Status
+            </label>
+
+            <select
+                id="statusFilter"
+                class="form-select"
+            >
+
+                <option value="">
+                    All Statuses
+                </option>
+
+                <option value="Applied">
+                    Applied
+                </option>
+
+                <option value="Shortlisted">
+                    Shortlisted
+                </option>
+
+                <option value="Interview">
+                    Interview
+                </option>
+
+                <option value="Selected">
+                    Selected
+                </option>
+
+                <option value="Rejected">
+                    Rejected
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- JOB TYPE -->
+
+        <div class="col-md-3">
+
+            <label
+                for="jobTypeFilter"
+                class="form-label"
+            >
+                Job Type
+            </label>
+
+            <select
+                id="jobTypeFilter"
+                class="form-select"
+            >
+
+                <option value="">
+                    All Job Types
+                </option>
+
+                <option value="Full-time">
+                    Full-time
+                </option>
+
+                <option value="Part-time">
+                    Part-time
+                </option>
+
+                <option value="Internship">
+                    Internship
+                </option>
+
+                <option value="Contract">
+                    Contract
+                </option>
+
+                <option value="Freelance">
+                    Freelance
+                </option>
+
+                <option value="Remote">
+                    Remote
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <!-- FILTER ACTIONS -->
+
+    <div class="d-flex gap-2 mt-4">
+
+        <button
+            type="button"
+            class="btn btn-primary"
+            id="applyFiltersBtn"
+        >
+            Apply Filters
+        </button>
+
+        <button
+            type="button"
+            class="btn btn-outline-secondary"
+            id="clearFiltersBtn"
+        >
+            Clear
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     APPLICATION TABLE
+============================================================ -->
+
+<div class="dashboard-card">
+
+    <div class="card-header">
+
+        <h3>
+            Job Applications
+        </h3>
+
+        <p>
+            Manage your applications, statuses and interviews.
+        </p>
+
+    </div>
+
+
+    <div class="table-responsive">
+
+        <table
+            class="table table-hover align-middle"
+            id="jobTable"
+        >
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        #
+                    </th>
+
+                    <th>
+                        Company
+                    </th>
+
+                    <th>
+                        Job Title
+                    </th>
+
+                    <th>
+                        Location
+                    </th>
+
+                    <th>
+                        Job Type
+                    </th>
+
+                    <th>
+                        Applied Date
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Salary
+                    </th>
+
+                    <th>
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for job in jobs %}
+
+                <tr
+                    data-company="{{ job.company|lower }}"
+                    data-location="{{ (job.location or '')|lower }}"
+                    data-status="{{ job.status }}"
+                    data-job-type="{{ job.job_type or '' }}"
+                >
+
+                    <!-- NUMBER -->
+
+                    <td>
+                        {{ loop.index }}
+                    </td>
+
+
+                    <!-- COMPANY -->
+
+                    <td>
+
+                        <div class="company-name">
+
+                            {{ job.company }}
+
+                        </div>
+
+                    </td>
+
+
+                    <!-- JOB TITLE -->
+
+                    <td>
+
+                        <div
+                            class="job-title"
+                            title="{{ job.title }}"
+                        >
+                            {{ job.title }}
+                        </div>
+
+                    </td>
+
+
+                    <!-- LOCATION -->
+
+                    <td>
+
+                        <span class="location-text">
+
+                            {% if job.location %}
+
+                                <i class="bi bi-geo-alt me-1"></i>
+                                {{ job.location }}
+
+                            {% else %}
+
+                                —
+
+                            {% endif %}
+
+                        </span>
+
+                    </td>
+
+
+                    <!-- JOB TYPE -->
+
+                    <td>
+
+                        {% if job.job_type %}
+
+                            {{ job.job_type }}
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- APPLIED DATE -->
+
+                    <td>
+
+                        <span class="date-text">
+
+                            <i class="bi bi-calendar3 me-1"></i>
+
+                            {{ job.applied_date.strftime("%d %b %Y") }}
+
+                        </span>
+
+                    </td>
+
+
+                    <!-- STATUS -->
+
+                    <td>
+
+                        {% if job.status == "Applied" %}
+
+                            <span
+                                class="status-badge"
+                                style="background:#e8f1ff;color:#0d6efd;"
+                            >
+                                Applied
+                            </span>
+
+                        {% elif job.status == "Shortlisted" %}
+
+                            <span
+                                class="status-badge"
+                                style="background:#ffe9ef;color:#ff5c7a;"
+                            >
+                                Shortlisted
+                            </span>
+
+                        {% elif job.status == "Interview" %}
+
+                            <span
+                                class="status-badge"
+                                style="background:#fff1dc;color:#ff9800;"
+                            >
+                                Interview
+                            </span>
+
+                        {% elif job.status == "Selected" %}
+
+                            <span
+                                class="status-badge"
+                                style="background:#e5f8ed;color:#20a464;"
+                            >
+                                Selected
+                            </span>
+
+                        {% elif job.status == "Rejected" %}
+
+                            <span
+                                class="status-badge"
+                                style="background:#ffe8e8;color:#e53935;"
+                            >
+                                Rejected
+                            </span>
+
+                        {% else %}
+
+                            <span
+                                class="status-badge"
+                                style="background:#f1f5f9;color:#475569;"
+                            >
+                                {{ job.status }}
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- SALARY -->
+
+                    <td>
+
+                        {% if job.salary %}
+
+                            {{ job.salary }}
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- ACTIONS -->
+
+                    <td>
+
+                        <div class="action-buttons">
+
+                            <!-- EDIT -->
+
+                            <a
+                                href="{{ url_for('edit_job', job_id=job.id) }}"
+                                class="btn btn-outline-primary action-icon"
+                                title="Edit Application"
+                            >
+
+                                <i class="bi bi-pencil"></i>
+
+                            </a>
+
+
+                            <!-- ADD INTERVIEW -->
+
+                            <a
+                                href="{{ url_for('add_interview', job_id=job.id) }}"
+                                class="btn btn-outline-warning action-icon"
+                                title="Add Interview"
+                            >
+
+                                <i class="bi bi-calendar-plus"></i>
+
+                            </a>
+
+
+                            <!-- VIEW JOB -->
+
+                            {% if job.job_url %}
+
+                                <a
+                                    href="{{ job.job_url }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="btn btn-outline-secondary action-icon"
+                                    title="Open Job Posting"
+                                >
+
+                                    <i class="bi bi-box-arrow-up-right"></i>
+
+                                </a>
+
+                            {% endif %}
+
+
+                            <!-- DELETE -->
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-danger action-icon delete-job-btn"
+                                data-job-id="{{ job.id }}"
+                                title="Delete Application"
+                            >
+
+                                <i class="bi bi-trash"></i>
+
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+
+                    <td
+                        colspan="9"
+                        class="p-0"
+                    >
+
+                        <div class="empty-state">
+
+                            <div class="empty-state-icon">
+
+                                <i class="bi bi-briefcase"></i>
+
+                            </div>
+
+                            <h5>
+                                No applications yet
+                            </h5>
+
+                            <p>
+                                Start tracking your job applications by adding your first application.
+                            </p>
+
+                            <a
+                                href="{{ url_for('add_job') }}"
+                                class="btn btn-primary mt-2"
+                            >
+                                + Add Application
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     FILTER + DELETE JAVASCRIPT
+============================================================ -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const companyFilter =
+            document.getElementById("companyFilter");
+
+        const locationFilter =
+            document.getElementById("locationFilter");
+
+        const statusFilter =
+            document.getElementById("statusFilter");
+
+        const jobTypeFilter =
+            document.getElementById("jobTypeFilter");
+
+        const applyFiltersBtn =
+            document.getElementById("applyFiltersBtn");
+
+        const clearFiltersBtn =
+            document.getElementById("clearFiltersBtn");
+
+        const jobTable =
+            document.getElementById("jobTable");
+
+        const applicationCount =
+            document.getElementById("applicationCount");
+
+
+        function applyFilters() {
+
+            if (!jobTable) {
+                return;
+            }
+
+            const rows =
+                jobTable.querySelectorAll(
+                    "tbody tr[data-company]"
+                );
+
+
+            const company =
+                companyFilter
+                    ? companyFilter.value
+                        .trim()
+                        .toLowerCase()
+                    : "";
+
+
+            const location =
+                locationFilter
+                    ? locationFilter.value
+                        .trim()
+                        .toLowerCase()
+                    : "";
+
+
+            const status =
+                statusFilter
+                    ? statusFilter.value
+                    : "";
+
+
+            const jobType =
+                jobTypeFilter
+                    ? jobTypeFilter.value
+                    : "";
+
+
+            let visibleCount = 0;
+
+
+            rows.forEach(
+                function (row) {
+
+                    const rowCompany =
+                        row.dataset.company || "";
+
+                    const rowLocation =
+                        row.dataset.location || "";
+
+                    const rowStatus =
+                        row.dataset.status || "";
+
+                    const rowJobType =
+                        row.dataset.jobType || "";
+
+
+                    const companyMatch =
+                        !company ||
+                        rowCompany.includes(company);
+
+
+                    const locationMatch =
+                        !location ||
+                        rowLocation.includes(location);
+
+
+                    const statusMatch =
+                        !status ||
+                        rowStatus === status;
+
+
+                    const jobTypeMatch =
+                        !jobType ||
+                        rowJobType === jobType;
+
+
+                    const visible =
+                        companyMatch &&
+                        locationMatch &&
+                        statusMatch &&
+                        jobTypeMatch;
+
+
+                    row.style.display =
+                        visible ? "" : "none";
+
+
+                    if (visible) {
+                        visibleCount++;
+                    }
+
+                }
+            );
+
+
+            if (applicationCount) {
+
+                applicationCount.textContent =
+                    visibleCount +
+                    " application" +
+                    (visibleCount !== 1 ? "s" : "");
+
+            }
+
+        }
+
+
+        function clearFilters() {
+
+            if (companyFilter) {
+                companyFilter.value = "";
+            }
+
+            if (locationFilter) {
+                locationFilter.value = "";
+            }
+
+            if (statusFilter) {
+                statusFilter.value = "";
+            }
+
+            if (jobTypeFilter) {
+                jobTypeFilter.value = "";
+            }
+
+            applyFilters();
+
+        }
+
+
+        if (applyFiltersBtn) {
+
+            applyFiltersBtn.addEventListener(
+                "click",
+                applyFilters
+            );
+
+        }
+
+
+        if (clearFiltersBtn) {
+
+            clearFiltersBtn.addEventListener(
+                "click",
+                clearFilters
+            );
+
+        }
+
+
+        /* =====================================================
+           DELETE JOB
+        ===================================================== */
+
+        const deleteButtons =
+            document.querySelectorAll(
+                ".delete-job-btn"
+            );
+
+
+        deleteButtons.forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    async function () {
+
+                        const jobId =
+                            this.dataset.jobId;
+
+
+                        if (!jobId) {
+                            return;
+                        }
+
+
+                        const confirmed =
+                            confirm(
+                                "Are you sure you want to delete this application?"
+                            );
+
+
+                        if (!confirmed) {
+                            return;
+                        }
+
+
+                        try {
+
+                            const response =
+                                await fetch(
+                                    "/api/jobs/" + jobId,
+                                    {
+                                        method: "DELETE",
+                                        headers: {
+                                            "Accept":
+                                                "application/json"
+                                        }
+                                    }
+                                );
+
+
+                            const result =
+                                await response.json();
+
+
+                            if (!response.ok) {
+
+                                alert(
+                                    result.error ||
+                                    "Unable to delete application."
+                                );
+
+                                return;
+
+                            }
+
+
+                            const row =
+                                this.closest("tr");
+
+
+                            if (row) {
+                                row.remove();
+                            }
+
+
+                            applyFilters();
+
+
+                            /* Reload if no applications remain */
+
+                            const remainingRows =
+                                document.querySelectorAll(
+                                    "#jobTable tbody tr[data-company]"
+                                );
+
+
+                            if (remainingRows.length === 0) {
+
+                                window.location.reload();
+
+                            }
+
+                        }
+
+                        catch (error) {
+
+                            console.error(error);
+
+                            alert(
+                                "Something went wrong while deleting the application."
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+{% endblock %}
