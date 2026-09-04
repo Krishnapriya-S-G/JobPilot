@@ -1,218 +1,150 @@
-\# 💼 JobPilot — Job Application \& Interview Tracker
-
-
+# 💼 JobPilot — Job Application & Interview Tracker
 
 Full-stack web app to track job applications end-to-end — from the first application to the final offer — with an AI-powered resume/JD match feature and secure OTP-based authentication.
 
+**From Application to Opportunity.**
+
+🔗 **Live Demo:** _add your deployed link here after deploying_
 
 
-\*\*From Application to Opportunity.\*\*
-
-
-
-🔗 \*\*Live Demo:\*\* \_add your deployed link here after deploying\_
-
-
-
-\## 📌 Problem Statement
-
-
+## 📌 Problem Statement
 
 Job hunting usually means juggling dozens of applications across spreadsheets, emails, and sticky notes — losing track of interview rounds, follow-ups, and what to prepare next. JobPilot centralizes the entire job search into one dashboard: track every application's status, log interview feedback, see analytics on your search activity, and check how well your skills match a job description before you apply.
 
 
+## 🛠️ Tools \& Skills
 
-\## 🛠️ Tools \& Skills
+- **Backend** — Python, Flask, Flask-SQLAlchemy, Flask-Login
 
+- **Database** — SQLite
 
+- **API** — REST API (GET / POST / PUT / DELETE)
 
-\- \*\*Backend\*\* — Python, Flask, Flask-SQLAlchemy, Flask-Login
+- **Frontend** — HTML, CSS, JavaScript, Bootstrap, Chart.js
 
-\- \*\*Database\*\* — SQLite
+- **Auth \& Security** — Password hashing (Werkzeug), OTP email verification, environment-based secrets (`python-dotenv`)
 
-\- \*\*API\*\* — REST API (GET / POST / PUT / DELETE)
-
-\- \*\*Frontend\*\* — HTML, CSS, JavaScript, Bootstrap, Chart.js
-
-\- \*\*Auth \& Security\*\* — Password hashing (Werkzeug), OTP email verification, environment-based secrets (`python-dotenv`)
-
-\- \*\*Other\*\* — Git \& GitHub, Postman (API testing)
+- **Other** — Git \& GitHub, Postman (API testing)
 
 
-
-\## 📁 Project Structure
-
-
+## 📁 Project Structure
 
 ```text
-
 JobPilot/
 
 │
-
 ├── app.py                    # Flask app: routes, models, REST API, OTP/email logic
-
 ├── requirements.txt
-
 ├── .env                       # Local secrets (not committed)
-
 ├── .gitignore
-
 │
-
 ├── screenshots/
-
 │   ├── dashboard.png
-
 │   ├── applications.png
-
 │   ├── interviews.png
-
 │   └── resume-match.png
-
 │
-
 ├── templates/
-
 │   ├── base.html
-
 │   ├── dashboard.html
-
 │   ├── jobs.html
-
-│   ├── job\_form.html
-
+│   ├── job_form.html
 │   ├── interviews.html
-
-│   ├── interview\_form.html
-
-│   ├── resume\_match.html
-
+│   ├── interview_form.html
+│   ├── resume_match.html
 │   ├── login.html
-
 │   ├── register.html
-
-│   ├── forgot\_password.html
-
-│   ├── verify\_otp.html
-
-│   ├── reset\_password.html
-
+│   ├── forgot_password.html
+│   ├── verify_otp.html
+│   ├── reset_password.html
 │   ├── 404.html
-
 │   └── 500.html
-
 │
-
 └── static/
-
-&#x20;   ├── css/style.css
-
-&#x20;   └── js/app.js
-
+    ├── css/style.css
+    └── js/app.js
 ```
 
 
+## ✨ Key Features
 
-\## ✨ Key Features
+### 🔐 Authentication
 
+- Register / Login / Logout with hashed passwords
 
+- Forgot Password → 6-digit OTP emailed to the user → verify → reset (OTP is hashed in-session and expires after 5 minutes)
 
-\### 🔐 Authentication
+- Live username/email availability check while typing on the register page
 
 
+### 📊 Dashboard
 
-\- Register / Login / Logout with hashed passwords
 
-\- Forgot Password → 6-digit OTP emailed to the user → verify → reset (OTP is hashed in-session and expires after 5 minutes)
+- Total applications and a pipeline view: Applied → Shortlisted → Interview → Selected / Rejected
+- Monthly application activity chart, status distribution donut chart, and top-companies bar chart
 
-\- Live username/email availability check while typing on the register page
 
+### 📋 Applications (CRUD)
 
+- Company, title, location, job type, applied date, job URL, salary, status, notes
+- Search \& filter by company, location, status, and job type
 
-\### 📊 Dashboard
 
+### 🗓️ Interview Tracker
 
 
-\- Total applications and a pipeline view: Applied → Shortlisted → Interview → Selected / Rejected
+- Log rounds per job: date, time, round, type, status, feedback
 
-\- Monthly application activity chart, status distribution donut chart, and top-companies bar chart
+- The job's overall status auto-updates from interview outcomes — e.g. all rounds "Passed" → job marked "Selected"; any round "Failed" → job marked "Rejected"
 
 
 
-\### 📋 Applications (CRUD)
+### 🤖 AI Resume ↔ Job Description Match
 
 
+- Paste your skills and a job description
 
-\- Company, title, location, job type, applied date, job URL, salary, status, notes
+- Get a match score, matched skills, missing skills, and a suggested learning list — computed locally, no external API needed
 
-\- Search \& filter by company, location, status, and job type
 
 
+### 🔌 REST API
 
-\### 🗓️ Interview Tracker
 
+- Full CRUD for jobs and interviews, scoped per logged-in user
 
+- Tested with Postman
 
-\- Log rounds per job: date, time, round, type, status, feedback
 
-\- The job's overall status auto-updates from interview outcomes — e.g. all rounds "Passed" → job marked "Selected"; any round "Failed" → job marked "Rejected"
+## 🖥️ Screenshots
 
 
+### Dashboard
 
-\### 🤖 AI Resume ↔ Job Description Match
+![Dashboard](screenshots/dashboard.png)
 
 
+### Applications
 
-\- Paste your skills and a job description
+![Applications](screenshots/applications.png)
 
-\- Get a match score, matched skills, missing skills, and a suggested learning list — computed locally, no external API needed
 
+### Interview Tracker
 
+![Interviews](screenshots/interviews.png)
 
-\### 🔌 REST API
 
+### AI Resume Match
 
+![Resume Match](screenshots/resume-match.png)
 
-\- Full CRUD for jobs and interviews, scoped per logged-in user
 
-\- Tested with Postman
+### Login
+![Login](screenshots/login.png)
 
+## 🚀 How to Run
 
-
-\## 🖥️ Screenshots
-
-
-
-\### Dashboard
-
-!\[Dashboard](screenshots/dashboard.png)
-
-
-
-\### Applications
-
-!\[Applications](screenshots/applications.png)
-
-
-
-\### Interview Tracker
-
-!\[Interviews](screenshots/interviews.png)
-
-
-
-\### AI Resume Match
-
-!\[Resume Match](screenshots/resume-match.png)
-
-
-
-\## 🚀 How to Run
-
-
-
-\### Clone the repository
+### Clone the repository
 
 
 
@@ -225,9 +157,7 @@ cd JobPilot
 ```
 
 
-
-\### Set up the Python environment
-
+### Set up the Python environment
 
 
 ```bash
@@ -240,34 +170,24 @@ pip install -r requirements.txt
 
 ```
 
-
-
-\### Configure environment variables
-
-
+### Configure environment variables
 
 Create a `.env` file in the project root:
 
-
-
 ```text
 
-MAIL\_USERNAME=your\_gmail\_address@gmail.com
+MAIL_USERNAME=your_gmail_address@gmail.com
 
-MAIL\_PASSWORD=your\_gmail\_app\_password
+MAIL_PASSWORD=your_gmail_app_password
 
-SECRET\_KEY=some-random-secret-string
+SECRET_KEY=some-random-secret-string
 
 ```
 
+`MAIL\_PASSWORD` must be a [Gmail App Password](https://myaccount.google.com/apppasswords) (requires 2-Step Verification), not your regular Gmail password. This account only *sends* OTP emails — each user receives their OTP at their own registered email.
 
 
-`MAIL\_PASSWORD` must be a \[Gmail App Password](https://myaccount.google.com/apppasswords) (requires 2-Step Verification), not your regular Gmail password. This account only \*sends\* OTP emails — each user receives their OTP at their own registered email.
-
-
-
-\### Run the app
-
+### Run the app
 
 
 ```bash
@@ -276,13 +196,11 @@ python app.py
 
 ```
 
-
-
-Open \*\*http://127.0.0.1:5000\*\* — the database and tables are created automatically on first run. You'll be redirected to `/register` to create your first account.
+Open **http://127.0.0.1:5000** — the database and tables are created automatically on first run. You'll be redirected to `/register` to create your first account.
 
 
 
-\## 🗄️ Database Schema
+## 🗄️ Database Schema
 
 
 
@@ -290,23 +208,19 @@ Open \*\*http://127.0.0.1:5000\*\* — the database and tables are created autom
 
 |---|---|
 
-| \*\*users\*\* | id, username, email, password (hashed) |
+| **users** | id, username, email, password (hashed) |
 
-| \*\*jobs\*\* | id, user\_id (FK), company, title, location, job\_type, applied\_date, job\_url, salary, status, notes |
+| **jobs** | id, user_id (FK), company, title, location, job_type, applied_date, job_url, salary, status, notes |
 
-| \*\*interviews\*\* | id, job\_id (FK), interview\_date, round, interview\_type, status, feedback |
-
-
-
-\## 🔌 REST API Reference
+| **interviews** | id, job_id (FK), interview_date, round, interview_type, status, feedback |
 
 
+## 🔌 REST API Reference
 
 All endpoints require an authenticated session and return JSON.
 
 
-
-\### Jobs
+### Jobs
 
 
 
@@ -326,7 +240,7 @@ All endpoints require an authenticated session and return JSON.
 
 
 
-\### Interviews
+### Interviews
 
 
 
@@ -346,7 +260,7 @@ All endpoints require an authenticated session and return JSON.
 
 
 
-\### AI Resume Match
+### AI Resume Match
 
 
 
@@ -358,7 +272,7 @@ All endpoints require an authenticated session and return JSON.
 
 
 
-\### Utility
+### Utility
 
 
 
@@ -372,23 +286,23 @@ All endpoints require an authenticated session and return JSON.
 
 
 
-\## 🔒 Security Notes
+## 🔒 Security Notes
 
 
 
-\- Passwords are hashed with Werkzeug's `generate\_password\_hash` — never stored in plain text.
+- Passwords are hashed with Werkzeug's `generate\_password\_hash` — never stored in plain text.
 
-\- OTPs are hashed (SHA-256) before being stored in the session and expire after 5 minutes.
+- OTPs are hashed (SHA-256) before being stored in the session and expire after 5 minutes.
 
-\- Email credentials and the Flask secret key are loaded from environment variables via `.env` (excluded from version control), not hardcoded.
-
-
-
-\## 👤 Author
+- Email credentials and the Flask secret key are loaded from environment variables via `.env` (excluded from version control), not hardcoded.
 
 
 
-\*\*Krishnapriya S G\*\*
+## 👤 Author
 
-Aspiring Full-Stack Developer | \[LinkedIn](https://www.linkedin.com/in/krishnapriya-s-g)
+
+
+**Krishnapriya S G **
+
+ [LinkedIn](https://www.linkedin.com/in/krishnapriya-s-g)
 
