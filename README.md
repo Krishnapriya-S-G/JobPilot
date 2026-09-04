@@ -12,7 +12,7 @@ Full-stack web app to track job applications end-to-end — from the first appli
 Job hunting usually means juggling dozens of applications across spreadsheets, emails, and sticky notes — losing track of interview rounds, follow-ups, and what to prepare next. JobPilot centralizes the entire job search into one dashboard: track every application's status, log interview feedback, see analytics on your search activity, and check how well your skills match a job description before you apply.
 
 
-## 🛠️ Tools \& Skills
+## 🛠️ Tools & Skills
 
 - **Backend** — Python, Flask, Flask-SQLAlchemy, Flask-Login
 
@@ -22,9 +22,9 @@ Job hunting usually means juggling dozens of applications across spreadsheets, e
 
 - **Frontend** — HTML, CSS, JavaScript, Bootstrap, Chart.js
 
-- **Auth \& Security** — Password hashing (Werkzeug), OTP email verification, environment-based secrets (`python-dotenv`)
+- **Auth & Security** — Password hashing (Werkzeug), OTP email verification, environment-based secrets (`python-dotenv`)
 
-- **Other** — Git \& GitHub, Postman (API testing)
+- **Other** — Git & GitHub, Postman (API testing)
 
 
 ## 📁 Project Structure
@@ -87,7 +87,7 @@ JobPilot/
 ### 📋 Applications (CRUD)
 
 - Company, title, location, job type, applied date, job URL, salary, status, notes
-- Search \& filter by company, location, status, and job type
+- Search & filter by company, location, status, and job type
 
 
 ### 🗓️ Interview Tracker
@@ -164,7 +164,7 @@ cd JobPilot
 
 python -m venv venv
 
-venv\\Scripts\\activate
+venv\Scripts\activate
 
 pip install -r requirements.txt
 
@@ -184,7 +184,7 @@ SECRET_KEY=some-random-secret-string
 
 ```
 
-`MAIL\_PASSWORD` must be a [Gmail App Password](https://myaccount.google.com/apppasswords) (requires 2-Step Verification), not your regular Gmail password. This account only *sends* OTP emails — each user receives their OTP at their own registered email.
+`MAIL_PASSWORD` must be a [Gmail App Password](https://myaccount.google.com/apppasswords) (requires 2-Step Verification), not your regular Gmail password. This account only *sends* OTP emails — each user receives their OTP at their own registered email.
 
 
 ### Run the app
@@ -228,7 +228,7 @@ All endpoints require an authenticated session and return JSON.
 
 |---|---|---|
 
-| GET | `/api/jobs` | List jobs (filter by `company`, `location`, `status`, `job\_type`) |
+| GET | `/api/jobs` | List jobs (filter by `company`, `location`, `status`, `job_type`) |
 
 | GET | `/api/jobs/<id>` | Get a single job |
 
@@ -268,7 +268,7 @@ All endpoints require an authenticated session and return JSON.
 
 |---|---|---|
 
-| POST | `/api/resume-match` | `{"resume\_skills": "...", "job\_description": "..."}` → match score + suggestions |
+| POST | `/api/resume-match` | `{"resume_skills": "...", "job_description": "..."}` → match score + suggestions |
 
 
 
@@ -290,7 +290,7 @@ All endpoints require an authenticated session and return JSON.
 
 
 
-- Passwords are hashed with Werkzeug's `generate\_password\_hash` — never stored in plain text.
+- Passwords are hashed with Werkzeug's `generate_password_hash` — never stored in plain text.
 
 - OTPs are hashed (SHA-256) before being stored in the session and expire after 5 minutes.
 
