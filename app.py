@@ -7,7 +7,11 @@ from sqlalchemy import func
 import random
 import hashlib
 import smtplib
+import os
 from email.message import EmailMessage
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 # ============================================================
@@ -16,7 +20,7 @@ from email.message import EmailMessage
 
 app = Flask(__name__)
 
-app.config["SECRET_KEY"] = "jobpilot-secret-key-change-this"
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "fallback-dev-key-change-this")
 
 # New database name
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///jobpilot.db"
@@ -31,8 +35,8 @@ db = SQLAlchemy(app)
 
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
 app.config["MAIL_PORT"] = 587
-app.config["MAIL_USERNAME"] = "YOUR_GMAIL@gmail.com"
-app.config["MAIL_PASSWORD"] = "YOUR_GMAIL_APP_PASSWORD"
+app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 app.config["MAIL_USE_TLS"] = True
 
 # ============================================================
@@ -42,6 +46,8 @@ app.config["MAIL_USE_TLS"] = True
 login_manager = LoginManager(app)
 
 login_manager.login_view = "login"
+
+login_manager.login_message = None
 
 
 # ============================================================
@@ -325,6 +331,47 @@ def login():
 
     return render_template("login.html")
 
+# ============================================================
+# CHECK USERNAME AVAILABILITY (AJAX)
+# ============================================================
+
+@app.route("/api/check-username", methods=["GET"])
+def check_username():
+
+    username = request.args.get("username", "").strip()
+
+    if not username:
+        return jsonify({"available": False, "message": "Username cannot be empty."})
+
+    if len(username) < 3:
+        return jsonify({"available": False, "message": "Username must be at least 3 characters."})
+
+    existing = User.query.filter_by(username=username).first()
+
+    if existing:
+        return jsonify({"available": False, "message": "Username is already taken."})
+
+    return jsonify({"available": True, "message": "Username is available."})
+
+
+# ============================================================
+# CHECK EMAIL AVAILABILITY (AJAX)
+# ============================================================
+
+@app.route("/api/check-email", methods=["GET"])
+def check_email():
+
+    email = request.args.get("email", "").strip().lower()
+
+    if not email:
+        return jsonify({"available": False, "message": "Email cannot be empty."})
+
+    existing = User.query.filter_by(email=email).first()
+
+    if existing:
+        return jsonify({"available": False, "message": "Email is already registered."})
+
+    return jsonify({"available": True, "message": "Email is available."})
 
 # ============================================================
 # REGISTER
@@ -556,6 +603,7 @@ def reset_password():
             )
 
         # Update password
+        
         user.password = generate_password_hash(
             password
         )
@@ -568,9 +616,12 @@ def reset_password():
         session.pop("reset_otp_expires", None)
         session.pop("reset_otp_verified", None)
 
+        flash("Password reset successfully. Please log in with your new password.", "success")
+
         return redirect(
             url_for("login")
         )
+    
 
     return render_template(
         "reset_password.html"

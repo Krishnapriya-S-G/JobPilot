@@ -40,15 +40,24 @@
     <!-- BRAND -->
     <div class="brand">
 
-        <h1>
-            <span style="color:#0d6efd;">Job</span>Pilot
-        </h1>
-
-        <p>
-            Create your account and manage your job search.
-        </p>
-
+    <div class="auth-brand-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none"
+             stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 3h6a2 2 0 0 1 2 2v2H7V5a2 2 0 0 1 2-2Z"></path>
+            <rect x="3" y="7" width="18" height="14" rx="2"></rect>
+            <path d="M3 12h18"></path>
+        </svg>
     </div>
+
+    <h1>
+        <span class="brand-accent">Job</span>Pilot
+    </h1>
+
+    <p>
+        Create your account and manage your job search.
+    </p>
+
+</div>
 
 
     <!-- ERROR -->
@@ -73,6 +82,7 @@
 
             <input
                 type="text"
+                id="username"
                 name="username"
                 class="form-control"
                 placeholder="Enter your username"
@@ -80,10 +90,13 @@
                 required
             >
 
+            <div id="usernameFeedback" class="form-text"></div>
+
         </div>
 
 
         <!-- EMAIL -->
+
         <div class="mb-3">
 
             <label class="form-label">
@@ -92,12 +105,15 @@
 
             <input
                 type="email"
+                id="email"
                 name="email"
                 class="form-control"
                 placeholder="Enter your email"
                 autocomplete="email"
                 required
             >
+
+            <div id="emailFeedback" class="form-text"></div>
 
         </div>
 
@@ -166,6 +182,76 @@
 
 </div>
 
+
+<script>
+
+function debounce(fn, delay) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+}
+
+function setFeedback(el, message, ok) {
+    el.textContent = message;
+    el.style.color = ok ? "#0f7a3d" : "#dc3545";
+}
+
+const usernameInput = document.getElementById("username");
+const usernameFeedback = document.getElementById("usernameFeedback");
+
+const checkUsername = debounce(async function () {
+
+    const value = usernameInput.value.trim();
+
+    if (!value) {
+        usernameFeedback.textContent = "";
+        return;
+    }
+
+    try {
+        const res = await fetch(`/api/check-username?username=${encodeURIComponent(value)}`);
+        const data = await res.json();
+        setFeedback(usernameFeedback, data.message, data.available);
+    } catch (err) {
+        usernameFeedback.textContent = "";
+    }
+
+}, 400);
+
+if (usernameInput) {
+    usernameInput.addEventListener("input", checkUsername);
+}
+
+
+const emailInput = document.getElementById("email");
+const emailFeedback = document.getElementById("emailFeedback");
+
+const checkEmail = debounce(async function () {
+
+    const value = emailInput.value.trim();
+
+    if (!value) {
+        emailFeedback.textContent = "";
+        return;
+    }
+
+    try {
+        const res = await fetch(`/api/check-email?email=${encodeURIComponent(value)}`);
+        const data = await res.json();
+        setFeedback(emailFeedback, data.message, data.available);
+    } catch (err) {
+        emailFeedback.textContent = "";
+    }
+
+}, 400);
+
+if (emailInput) {
+    emailInput.addEventListener("input", checkEmail);
+}
+
+</script>
 </body>
 
 </html>

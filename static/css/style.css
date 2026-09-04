@@ -908,6 +908,18 @@ a {
     margin-bottom: 27px;
 }
 
+.auth-brand-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 14px;
+    border-radius: 14px;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 16px rgba(13, 110, 253, 0.25);
+}
+
 .auth-card .brand h1 {
     margin: 0;
     color: var(--dark);
